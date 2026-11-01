@@ -1,0 +1,91 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BerkayAI</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:#090611;color:white;
+ font-family:Arial,sans-serif;
+ min-height:100vh;display:flex;
+ flex-direction:column;align-items:center;
+}
+header{
+ width:100%;padding:20px;
+ background:#140b22;border-bottom:1px solid #8136c9;
+ text-align:center;font-size:26px;
+ font-weight:bold;color:#c084fc;
+}
+main{width:92%;max-width:700px;margin:35px auto;flex:1}
+h2{text-align:center;color:#d8b4fe}
+#chat{
+ min-height:300px;background:#130d20;
+ border:1px solid #663399;border-radius:16px;
+ padding:15px;overflow-y:auto;
+}
+.msg{padding:12px;margin:10px 0;border-radius:12px;white-space:pre-wrap}
+.user{background:#51218a;text-align:right}
+.ai{background:#261638}
+form{display:flex;gap:8px;margin-top:15px}
+input{
+ flex:1;min-width:0;padding:15px;
+ border-radius:12px;border:1px solid #8b5cf6;
+ background:#171027;color:white;font-size:16px;
+}
+button{
+ padding:14px 20px;border:0;border-radius:12px;
+ background:#9333ea;color:white;font-weight:bold;
+}
+footer{padding:20px;color:#9b83b5}
+</style>
+</head>
+<body>
+<header>💜 BerkayAI</header>
+<main>
+<h2>Merhaba! Ben BerkayAI 🤖</h2>
+<div id="chat">
+<div class="msg ai">Merhaba! Sana nasıl yardımcı olabilirim?</div>
+</div>
+<form id="form">
+<input id="message" placeholder="Bir şeyler yaz..." autocomplete="off">
+<button>➤</button>
+</form>
+</main>
+<footer>BerkayAI • Yapay Zekâ Asistanı</footer>
+<script>
+const form=document.getElementById("form");
+const input=document.getElementById("message");
+const chat=document.getElementById("chat");
+
+form.addEventListener("submit",async e=>{
+ const text=input.value.trim();
+ if(!text)return;
+ const user=document.createElement("div");
+ user.className="msg user";
+ user.textContent=text;
+ chat.appendChild(user);
+ input.value="";
+ const ai=document.createElement("div");
+ ai.className="msg ai";
+ai.textContent="BerkayAI düşünüyor...";
+try {
+ const r=await fetch("/chat",{
+  method:"POST",
+  headers:{"Content-Type":"application/json"},
+  body:JSON.stringify({message:text})
+ });
+ const data=await r.json();
+ ai.textContent=data.reply;
+} catch(e) {
+ ai.textContent="Bağlantı hatası!";
+}
+ chat.appendChild(ai);
+ chat.scrollTop=chat.scrollHeight;
+});
+</script>
+</body>
+</html>
+
